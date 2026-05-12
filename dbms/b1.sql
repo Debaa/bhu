@@ -2311,7 +2311,6 @@ INSERT INTO books VALUES (3442, "Fubdamentals of Digital Image Processing", "A. 
 INSERT INTO books VALUES (3446, "Wireless communications Principles & practice", "Rappaport", NULL, NULL, NULL, "Pearson", NULL, "1120547", "CS/08-09/286/7", 2, 31);
 INSERT INTO books VALUES (3449, "Computer Organization", "Hamacher Zaky", NULL, NULL, NULL, "McGRAW Hill", NULL, "1120543", "DCSE/E/98/5", 2, 20);
 INSERT INTO books VALUES (3450, "Computer Organization", "Hamacher Zaky", NULL, NULL, NULL, "McGRAW Hill", NULL, "1120544", "DCSE/E/98/5", 2, 7);
-
 INSERT INTO books VALUES (NULL, "Introduction to Computer Theory", "Cohen", NULL, NULL, NULL, "Wiley India", NULL, NULL, "DCSE/E/98/5", 5, 1);
 INSERT INTO books VALUES (NULL, "Understanding Pointers in C", "Kanetkar", NULL, NULL, NULL, "BPV", NULL, NULL, "DCSE/E/98/5", 5, 2);
 INSERT INTO books VALUES (NULL, "Operating system concepts", "greg gagne", NULL, NULL, NULL, "Wiley", NULL, "donated", "DCSE/E/98/5", 5, 3);
