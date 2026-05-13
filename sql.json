@@ -23,5 +23,2741 @@
             "DESC books;"
         ],
         "description": "Create books table in library database"
-    }
+    },
+
+    
+  "LAB1TB": {
+    "prefix": "_L1TB",
+    "body": [
+      "CREATE DATABASE college_db;",
+      "",
+      "USE college_db;",
+      "",
+      "CREATE TABLE student (",
+      "    sid INT PRIMARY KEY,",
+      "    sname VARCHAR(50),",
+      "    gender VARCHAR(10),",
+      "    age INT,",
+      "    gpa DECIMAL(3,2)",
+      ");",
+      "",
+      "CREATE TABLE professor (",
+      "    prof_ssn INT PRIMARY KEY,",
+      "    prof_name VARCHAR(50),",
+      "    age INT,",
+      "    city VARCHAR(50),",
+      "    salary DECIMAL(10,2)",
+      ");",
+      "",
+      "CREATE TABLE department (",
+      "    dept_name VARCHAR(50) PRIMARY KEY,",
+      "    hod_ssn INT,",
+      "    dept_email VARCHAR(100),",
+      "    year_of_establishment INT,",
+      "",
+      "    FOREIGN KEY (hod_ssn)",
+      "    REFERENCES professor(prof_ssn)",
+      ");",
+      "",
+      "CREATE TABLE course (",
+      "    course_no INT PRIMARY KEY,",
+      "    cname VARCHAR(50),",
+      "    dname VARCHAR(50),",
+      "    prof_ssn INT,",
+      "",
+      "    FOREIGN KEY (dname)",
+      "    REFERENCES department(dept_name),",
+      "",
+      "    FOREIGN KEY (prof_ssn)",
+      "    REFERENCES professor(prof_ssn)",
+      ");",
+      "",
+      "CREATE TABLE enroll (",
+      "    sid INT,",
+      "    dept_name VARCHAR(50),",
+      "    course_no INT,",
+      "",
+      "    PRIMARY KEY (sid, course_no),",
+      "",
+      "    FOREIGN KEY (sid)",
+      "    REFERENCES student(sid),",
+      "",
+      "    FOREIGN KEY (dept_name)",
+      "    REFERENCES department(dept_name),",
+      "",
+      "    FOREIGN KEY (course_no)",
+      "    REFERENCES course(course_no)",
+      ");"
+    ],
+    "description": "Create all tables for LAB1 database schema"
+  },
+
+  "LAB1Q1": {
+    "prefix": "_L1Q1",
+    "body": [
+      "SELECT DISTINCT p.prof_name",
+      "FROM professor p",
+      "JOIN course c",
+      "ON p.prof_ssn = c.prof_ssn",
+      "WHERE p.prof_name LIKE 'A%'",
+      "GROUP BY p.prof_ssn, p.prof_name",
+      "HAVING COUNT(DISTINCT c.dname) = 1",
+      "AND MAX(c.dname) = 'Computer Science';"
+    ],
+    "description": "List professors teaching only Computer Science whose name starts with A"
+  },
+
+  "LAB1Q2": {
+    "prefix": "_L1Q2",
+    "body": [
+      "SELECT DISTINCT s.sname",
+      "FROM student s",
+      "JOIN enroll e1",
+      "ON s.sid = e1.sid",
+      "JOIN course c1",
+      "ON e1.course_no = c1.course_no",
+      "JOIN enroll e2",
+      "ON s.sid = e2.sid",
+      "JOIN course c2",
+      "ON e2.course_no = c2.course_no",
+      "WHERE s.gender = 'Male'",
+      "AND c1.dname = 'Civil Engineering'",
+      "AND c2.dname = 'Computer Science';"
+    ],
+    "description": "Print male students taking both Civil Engineering and Computer Science courses"
+  },
+
+  "LAB1Q3": {
+    "prefix": "_L1Q3",
+    "body": [
+      "SELECT DISTINCT s.sid, s.sname, s.gpa",
+      "FROM student s",
+      "JOIN enroll e",
+      "ON s.sid = e.sid",
+      "JOIN course c",
+      "ON e.course_no = c.course_no",
+      "WHERE s.gender = 'Female'",
+      "AND s.age <= 23",
+      "AND c.dname = 'Civil Engineering';"
+    ],
+    "description": "Print SID, name and GPA of female students age 23 or below taking Civil Engineering courses"
+  },
+
+  "LAB1Q4": {
+    "prefix": "_L1Q4",
+    "body": [
+      "SELECT e.dept_name",
+      "FROM enroll e",
+      "JOIN student s",
+      "ON e.sid = s.sid",
+      "WHERE s.gender = 'Male'",
+      "GROUP BY e.dept_name",
+      "HAVING COUNT(*) = (",
+      "    SELECT MAX(cnt)",
+      "    FROM (",
+      "        SELECT COUNT(*) AS cnt",
+      "        FROM enroll e1",
+      "        JOIN student s1",
+      "        ON e1.sid = s1.sid",
+      "        WHERE s1.gender = 'Male'",
+      "        GROUP BY e1.dept_name",
+      "    ) AS temp",
+      ");"
+    ],
+    "description": "List department having maximum number of male students"
+  },
+
+  "LAB1Q5": {
+    "prefix": "_L1Q5",
+    "body": [
+      "SELECT d.dept_name, p.prof_name",
+      "FROM department d",
+      "JOIN professor p",
+      "ON d.hod_ssn = p.prof_ssn",
+      "JOIN course c",
+      "ON d.dept_name = c.dname",
+      "GROUP BY d.dept_name, p.prof_name",
+      "HAVING COUNT(c.course_no) = (",
+      "    SELECT MIN(cnt)",
+      "    FROM (",
+      "        SELECT COUNT(*) AS cnt",
+      "        FROM course",
+      "        GROUP BY dname",
+      "    ) AS temp",
+      ");"
+    ],
+    "description": "List department and HOD name offering minimum number of courses"
+  },
+
+  "LAB1Q6": {
+    "prefix": "_L1Q6",
+    "body": [
+      "SELECT c.course_no, c.cname, p.prof_name",
+      "FROM course c",
+      "JOIN professor p",
+      "ON c.prof_ssn = p.prof_ssn",
+      "WHERE c.dname = 'Civil Engineering';"
+    ],
+    "description": "Print Civil Engineering course number, course name and professor name"
+  },
+
+
+  "LAB1DATA": {
+    "prefix": "_L1zdt",
+    "body": [
+      "USE college_db;",
+      "",
+      "INSERT INTO professor VALUES",
+      "(101, 'Amit Sharma', 45, 'Delhi', 90000),",
+      "(102, 'Anil Verma', 50, 'Mumbai', 95000),",
+      "(103, 'Rakesh Das', 42, 'Kolkata', 85000),",
+      "(104, 'Priya Roy', 39, 'Bhubaneswar', 80000),",
+      "(105, 'Sunita Jain', 48, 'Chennai', 92000);",
+      "",
+      "INSERT INTO department VALUES",
+      "('Computer Science', 101, 'cs@college.com', 2001),",
+      "('Civil Engineering', 103, 'civil@college.com', 1998),",
+      "('Mechanical', 105, 'mech@college.com', 1995);",
+      "",
+      "INSERT INTO course VALUES",
+      "(201, 'DBMS', 'Computer Science', 101),",
+      "(202, 'Operating System', 'Computer Science', 102),",
+      "(203, 'Surveying', 'Civil Engineering', 103),",
+      "(204, 'Structural Analysis', 'Civil Engineering', 104),",
+      "(205, 'Thermodynamics', 'Mechanical', 105);",
+      "",
+      "INSERT INTO student VALUES",
+      "(1, 'Rahul', 'Male', 22, 8.50),",
+      "(2, 'Sneha', 'Female', 21, 9.10),",
+      "(3, 'Arjun', 'Male', 24, 7.80),",
+      "(4, 'Pooja', 'Female', 23, 8.90),",
+      "(5, 'Karan', 'Male', 20, 7.50);",
+      "",
+      "INSERT INTO enroll VALUES",
+      "(1, 'Computer Science', 201),",
+      "(1, 'Civil Engineering', 203),",
+      "(2, 'Civil Engineering', 203),",
+      "(2, 'Civil Engineering', 204),",
+      "(3, 'Mechanical', 205),",
+      "(4, 'Civil Engineering', 204),",
+      "(5, 'Computer Science', 202),",
+      "(5, 'Civil Engineering', 203);"
+    ],
+    "description": "Insert sample data for LAB1 tables"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  "LAB2TB": {
+    "prefix": "~l2TB",
+    "body": [
+      "CREATE DATABASE property_db;",
+      "",
+      "USE property_db;",
+      "",
+      "CREATE TABLE Branch (",
+      "    branchNo VARCHAR(10) PRIMARY KEY,",
+      "    city VARCHAR(50)",
+      ");",
+      "",
+      "CREATE TABLE Staff (",
+      "    staffNo VARCHAR(10) PRIMARY KEY,",
+      "    Name VARCHAR(50),",
+      "    position VARCHAR(20),",
+      "    gender VARCHAR(10),",
+      "    DOB DATE,",
+      "    salary DECIMAL(10,2),",
+      "    branchNo VARCHAR(10),",
+      "",
+      "    FOREIGN KEY (branchNo)",
+      "    REFERENCES Branch(branchNo)",
+      ");",
+      "",
+      "CREATE TABLE Owner (",
+      "    ownerNo VARCHAR(10) PRIMARY KEY,",
+      "    Name VARCHAR(50),",
+      "    Address VARCHAR(100),",
+      "    contact_no VARCHAR(15)",
+      ");",
+      "",
+      "CREATE TABLE Property (",
+      "    propertyNo VARCHAR(10) PRIMARY KEY,",
+      "    city VARCHAR(50),",
+      "    type VARCHAR(20),",
+      "    rent DECIMAL(10,2),",
+      "    ownerNo VARCHAR(10),",
+      "    staffNo VARCHAR(10),",
+      "    branchNo VARCHAR(10),",
+      "",
+      "    FOREIGN KEY (ownerNo)",
+      "    REFERENCES Owner(ownerNo),",
+      "",
+      "    FOREIGN KEY (staffNo)",
+      "    REFERENCES Staff(staffNo),",
+      "",
+      "    FOREIGN KEY (branchNo)",
+      "    REFERENCES Branch(branchNo)",
+      ");"
+    ],
+    "description": "Create all tables for LAB2 property database schema"
+  },
+
+  "LAB2Q1": {
+    "prefix": "~l2Q1",
+    "body": [
+      "SELECT *",
+      "FROM Staff",
+      "WHERE gender = 'Male'",
+      "AND salary > 80000",
+      "AND branchNo IN (",
+      "    SELECT branchNo",
+      "    FROM Branch",
+      "    WHERE city = 'Mumbai'",
+      ");"
+    ],
+    "description": "List all male staff details working in Mumbai with salary greater than 80000"
+  },
+
+  "LAB2Q2": {
+    "prefix": "~l2Q2",
+    "body": [
+      "SELECT *",
+      "FROM Staff s",
+      "JOIN Branch b",
+      "ON s.branchNo = b.branchNo",
+      "WHERE s.position = 'Manager'",
+      "AND b.city IN ('New Delhi', 'Kolkata');"
+    ],
+    "description": "List all male managers working in New Delhi or Kolkata"
+  },
+
+  "LAB2Q3": {
+    "prefix": "~l2Q3",
+    "body": [
+      "SELECT *",
+      "FROM Property",
+      "WHERE type = 'Flat'",
+      "AND rent < 4000",
+      "ORDER BY rent ASC;"
+    ],
+    "description": "List all flats with rent below 4000 in ascending order of price"
+  },
+
+  "LAB2Q4": {
+    "prefix": "~l2Q4",
+    "body": [
+      "SELECT *",
+      "FROM Owner",
+      "WHERE Address LIKE '%Lucknow%';"
+    ],
+    "description": "Find all owners having Lucknow in their address"
+  },
+
+  "LAB2Q5": {
+    "prefix": "~l2Q5",
+    "body": [
+      "SELECT SUM(salary) AS total_salary",
+      "FROM Staff",
+      "WHERE gender = 'Male';"
+    ],
+    "description": "Display total salary of all male staff"
+  },
+
+  "LAB2Q6": {
+    "prefix": "~l2Q6",
+    "body": [
+      "SELECT COUNT(*) AS total_properties",
+      "FROM Property",
+      "WHERE rent > 3500;"
+    ],
+    "description": "Find total number of properties with rent greater than 3500"
+  },
+
+  "LAB2Q7": {
+    "prefix": "~l2Q7",
+    "body": [
+      "SELECT COUNT(*) AS total_managers,",
+      "SUM(salary) AS total_salary",
+      "FROM Staff",
+      "WHERE position = 'Manager';"
+    ],
+    "description": "Find total number of managers and sum of their salaries"
+  },
+
+  "LAB2Q8": {
+    "prefix": "~l2Q8",
+    "body": [
+      "SELECT Name",
+      "FROM Staff",
+      "WHERE salary > (",
+      "    SELECT AVG(salary)",
+      "    FROM Staff",
+      "    WHERE branchNo = 'BR003'",
+      ");"
+    ],
+    "description": "Find staff names having salary greater than average salary of branch BR003"
+  },
+
+  "LAB2Q9": {
+    "prefix": "~l2Q9",
+    "body": [
+      "UPDATE Staff",
+      "SET salary = salary + (salary * 0.05)",
+      "WHERE position = 'Manager';"
+    ],
+    "description": "Give all managers a 5 percent salary increase"
+  },
+
+  "LAB2DATA": {
+    "prefix": "~l2zdt",
+    "body": [
+      "USE property_db;",
+      "",
+      "INSERT INTO Branch VALUES",
+      "('BR001', 'Mumbai'),",
+      "('BR002', 'New Delhi'),",
+      "('BR003', 'Kolkata'),",
+      "('BR004', 'Lucknow');",
+      "",
+      "INSERT INTO Staff VALUES",
+      "('S001', 'Amit Kumar', 'Manager', 'Male', '1985-05-10', 90000, 'BR001'),",
+      "('S002', 'Rohit Das', 'Supervisor', 'Male', '1990-07-15', 55000, 'BR002'),",
+      "('S003', 'Priya Sharma', 'Manager', 'Female', '1988-02-20', 85000, 'BR003'),",
+      "('S004', 'Anil Roy', 'Assistant', 'Male', '1995-09-11', 35000, 'BR003'),",
+      "('S005', 'Vikas Jain', 'Manager', 'Male', '1982-01-18', 95000, 'BR002');",
+      "",
+      "INSERT INTO Owner VALUES",
+      "('O001', 'Ramesh Gupta', 'Lucknow, UP', '9876543210'),",
+      "('O002', 'Suresh Patel', 'Mumbai, MH', '9876543211'),",
+      "('O003', 'Anita Das', 'Kolkata, WB', '9876543212');",
+      "",
+      "INSERT INTO Property VALUES",
+      "('P001', 'Mumbai', 'Flat', 3500, 'O001', 'S001', 'BR001'),",
+      "('P002', 'Kolkata', 'House', 5000, 'O002', 'S003', 'BR003'),",
+      "('P003', 'New Delhi', 'Flat', 3000, 'O003', 'S005', 'BR002'),",
+      "('P004', 'Lucknow', 'Flat', 2500, 'O001', 'S002', 'BR004'),",
+      "('P005', 'Mumbai', 'House', 4500, 'O002', 'S001', 'BR001');"
+    ],
+    "description": "Insert sample data for LAB2 tables"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  "LAB3TB": {
+    "prefix": "~l3aTB",
+    "body": [
+      "CREATE DATABASE accident_db;",
+      "",
+      "USE accident_db;",
+      "",
+      "CREATE TABLE person (",
+      "    driver_id INT PRIMARY KEY,",
+      "    name VARCHAR(50),",
+      "    address VARCHAR(100)",
+      ");",
+      "",
+      "CREATE TABLE car (",
+      "    license VARCHAR(20) PRIMARY KEY,",
+      "    model VARCHAR(50),",
+      "    year INT",
+      ");",
+      "",
+      "CREATE TABLE accident (",
+      "    report_number INT PRIMARY KEY,",
+      "    accident_date DATE,",
+      "    location VARCHAR(100)",
+      ");",
+      "",
+      "CREATE TABLE owns (",
+      "    driver_id INT,",
+      "    license VARCHAR(20),",
+      "",
+      "    PRIMARY KEY (driver_id, license),",
+      "",
+      "    FOREIGN KEY (driver_id)",
+      "    REFERENCES person(driver_id),",
+      "",
+      "    FOREIGN KEY (license)",
+      "    REFERENCES car(license)",
+      ");",
+      "",
+      "CREATE TABLE participated (",
+      "    driver_id INT,",
+      "    license VARCHAR(20),",
+      "    report_number INT,",
+      "    damage_amount DECIMAL(10,2),",
+      "",
+      "    PRIMARY KEY (driver_id, license, report_number),",
+      "",
+      "    FOREIGN KEY (driver_id)",
+      "    REFERENCES person(driver_id),",
+      "",
+      "    FOREIGN KEY (license)",
+      "    REFERENCES car(license),",
+      "",
+      "    FOREIGN KEY (report_number)",
+      "    REFERENCES accident(report_number)",
+      ");"
+    ],
+    "description": "Create tables for accident database schema"
+  },
+
+  "LAB3Q1": {
+    "prefix": "~l3aQ1",
+    "body": [
+      "SELECT COUNT(DISTINCT o.driver_id) AS total_people",
+      "FROM owns o",
+      "JOIN participated p",
+      "ON o.license = p.license",
+      "JOIN accident a",
+      "ON p.report_number = a.report_number",
+      "WHERE YEAR(a.accident_date) = 2024;"
+    ],
+    "description": "Find total number of people who owned cars involved in accidents in 2024"
+  },
+
+  "LAB3Q2": {
+    "prefix": "~l3aQ2",
+    "body": [
+      "INSERT INTO accident",
+      "VALUES (101, '2024-05-15', 'Bhubaneswar');"
+    ],
+    "description": "Add a new accident into the database"
+  },
+
+  "LAB3Q3": {
+    "prefix": "~l3aQ3",
+    "body": [
+      "SELECT COUNT(*) AS total_accidents",
+      "FROM person pe",
+      "JOIN owns o",
+      "ON pe.driver_id = o.driver_id",
+      "JOIN participated p",
+      "ON o.license = p.license",
+      "WHERE pe.name = 'Steve Joes';"
+    ],
+    "description": "Find number of accidents involving cars owned by Steve Joes"
+  },
+
+  "LAB3Q4": {
+    "prefix": "~l3aQ4",
+    "body": [
+      "SELECT c.model, a.location",
+      "FROM participated p",
+      "JOIN car c",
+      "ON p.license = c.license",
+      "JOIN accident a",
+      "ON p.report_number = a.report_number",
+      "WHERE p.damage_amount = (",
+      "    SELECT MAX(damage_amount)",
+      "    FROM participated",
+      ");"
+    ],
+    "description": "Find car model and accident location where damage amount is highest"
+  },
+
+  "LAB3Q5": {
+    "prefix": "~l3aQ5",
+    "body": [
+      "SELECT *",
+      "FROM person",
+      "WHERE driver_id NOT IN (",
+      "    SELECT driver_id",
+      "    FROM participated",
+      ");"
+    ],
+    "description": "Find drivers who did not make any accident"
+  },
+
+  "LAB3Q6": {
+    "prefix": "~l3aQ6",
+    "body": [
+      "SELECT DISTINCT c.model",
+      "FROM car c",
+      "JOIN participated p",
+      "ON c.license = p.license",
+      "JOIN accident a",
+      "ON p.report_number = a.report_number",
+      "WHERE YEAR(a.accident_date) >= YEAR(CURDATE()) - 5;"
+    ],
+    "description": "Find car models damaged in accidents during last five years"
+  },
+
+  "LAB3DATA": {
+    "prefix": "~l3azdt",
+    "body": [
+      "USE accident_db;",
+      "",
+      "INSERT INTO person VALUES",
+      "(1, 'Steve Joes', 'Delhi'),",
+      "(2, 'Rahul Sharma', 'Mumbai'),",
+      "(3, 'Anita Das', 'Kolkata'),",
+      "(4, 'Vikas Roy', 'Lucknow'),",
+      "(5, 'Pooja Singh', 'Bhubaneswar');",
+      "",
+      "INSERT INTO car VALUES",
+      "('OD01A1234', 'Hyundai', 2020),",
+      "('DL02B5678', 'Honda City', 2019),",
+      "('MH03C7890', 'Maruti Suzuki', 2022),",
+      "('WB04D4567', 'Toyota', 2021),",
+      "('UP05E9876', 'Hyundai', 2018);",
+      "",
+      "INSERT INTO accident VALUES",
+      "(101, '2024-01-15', 'Delhi'),",
+      "(102, '2023-06-10', 'Mumbai'),",
+      "(103, '2022-11-05', 'Lucknow'),",
+      "(104, '2024-03-20', 'Kolkata'),",
+      "(105, '2021-09-18', 'Bhubaneswar');",
+      "",
+      "INSERT INTO owns VALUES",
+      "(1, 'OD01A1234'),",
+      "(2, 'DL02B5678'),",
+      "(3, 'MH03C7890'),",
+      "(4, 'WB04D4567'),",
+      "(5, 'UP05E9876');",
+      "",
+      "INSERT INTO participated VALUES",
+      "(1, 'OD01A1234', 101, 5000),",
+      "(2, 'DL02B5678', 102, 12000),",
+      "(3, 'MH03C7890', 103, 7000),",
+      "(1, 'OD01A1234', 104, 15000),",
+      "(4, 'WB04D4567', 105, 3000);"
+    ],
+    "description": "Insert sample data into accident database tables"
+  },
+
+
+
+
+
+
+  
+  "LAB3BQ1": {
+    "prefix": "~l3bQ1",
+    "body": [
+      "SELECT COUNT(DISTINCT o.driver_id) AS total_people",
+      "FROM owns o",
+      "WHERE o.license NOT IN (",
+      "    SELECT p.license",
+      "    FROM participated p",
+      "    JOIN accident a",
+      "    ON p.report_number = a.report_number",
+      "    WHERE YEAR(a.accident_date) = 2024",
+      ");"
+    ],
+    "description": "Find total number of people who owned cars not involved in accidents in 2024"
+  },
+
+  "LAB3BQ2": {
+    "prefix": "~l3bQ2",
+    "body": [
+      "SELECT COUNT(*) AS total_accidents",
+      "FROM car c",
+      "JOIN participated p",
+      "ON c.license = p.license",
+      "WHERE c.model = 'Hyundai';"
+    ],
+    "description": "Find number of accidents involving Hyundai cars"
+  },
+
+  "LAB3BQ3": {
+    "prefix": "~l3bQ3",
+    "body": [
+      "SELECT location",
+      "FROM accident",
+      "GROUP BY location",
+      "HAVING COUNT(*) = (",
+      "    SELECT MAX(acc_count)",
+      "    FROM (",
+      "        SELECT COUNT(*) AS acc_count",
+      "        FROM accident",
+      "        GROUP BY location",
+      "    ) AS temp",
+      ");"
+    ],
+    "description": "Find location having maximum number of accidents"
+  },
+
+  "LAB3BQ4": {
+    "prefix": "~l3bQ4",
+    "body": [
+      "SELECT YEAR(a.accident_date) AS year,",
+      "a.location",
+      "FROM accident a",
+      "JOIN participated p",
+      "ON a.report_number = p.report_number",
+      "WHERE p.damage_amount > 5000;"
+    ],
+    "description": "Find year and location where damage amount is greater than 5000"
+  },
+
+  "LAB3BQ5": {
+    "prefix": "~l3bQ5",
+    "body": [
+      "SELECT DISTINCT pe.name",
+      "FROM person pe",
+      "JOIN participated p",
+      "ON pe.driver_id = p.driver_id",
+      "JOIN accident a",
+      "ON p.report_number = a.report_number",
+      "WHERE a.location = 'Lucknow';"
+    ],
+    "description": "Find drivers who caused accidents in Lucknow"
+  },
+
+  "LAB3BQ6": {
+    "prefix": "~l3bQ6",
+    "body": [
+      "SELECT model",
+      "FROM car",
+      "WHERE license NOT IN (",
+      "    SELECT license",
+      "    FROM participated",
+      ");"
+    ],
+    "description": "Find car models which never met with accidents"
+  },
+
+  "LAB3BDATA": {
+    "prefix": "~l3bzdt",
+    "body": [
+      "USE accident_db;",
+      "",
+      "INSERT INTO person VALUES",
+      "(1, 'Amit Sharma', 'Delhi'),",
+      "(2, 'Rohit Das', 'Mumbai'),",
+      "(3, 'Priya Roy', 'Lucknow'),",
+      "(4, 'Anil Kumar', 'Kolkata'),",
+      "(5, 'Sneha Jain', 'Bhubaneswar'),",
+      "(6, 'Vikas Singh', 'Patna');",
+      "",
+      "INSERT INTO car VALUES",
+      "('DL01AA1111', 'Hyundai', 2020),",
+      "('MH02BB2222', 'Honda City', 2019),",
+      "('UP03CC3333', 'Hyundai', 2021),",
+      "('WB04DD4444', 'Toyota', 2018),",
+      "('OD05EE5555', 'Maruti Suzuki', 2022),",
+      "('BR06FF6666', 'Tata Nexon', 2023);",
+      "",
+      "INSERT INTO accident VALUES",
+      "(201, '2024-01-15', 'Lucknow'),",
+      "(202, '2023-06-20', 'Delhi'),",
+      "(203, '2024-03-18', 'Mumbai'),",
+      "(204, '2022-08-11', 'Lucknow'),",
+      "(205, '2021-12-05', 'Kolkata');",
+      "",
+      "INSERT INTO owns VALUES",
+      "(1, 'DL01AA1111'),",
+      "(2, 'MH02BB2222'),",
+      "(3, 'UP03CC3333'),",
+      "(4, 'WB04DD4444'),",
+      "(5, 'OD05EE5555'),",
+      "(6, 'BR06FF6666');",
+      "",
+      "INSERT INTO participated VALUES",
+      "(1, 'DL01AA1111', 201, 7000),",
+      "(2, 'MH02BB2222', 202, 4000),",
+      "(3, 'UP03CC3333', 203, 9000),",
+      "(4, 'WB04DD4444', 204, 3000),",
+      "(5, 'OD05EE5555', 205, 6000);"
+    ],
+    "description": "Insert sample data for SET-2 accident database"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  "~a1tb": {
+    "prefix": "~a1tb",
+    "body": [
+      "CREATE DATABASE employee_db;",
+      "",
+      "USE employee_db;",
+      "",
+      "CREATE TABLE Employee (",
+      "    Employee_ID INT PRIMARY KEY,",
+      "    Name VARCHAR(50),",
+      "    Age INT,",
+      "    Salary DECIMAL(10,2),",
+      "    City VARCHAR(50),",
+      "    Country VARCHAR(50),",
+      "    Email_id VARCHAR(100)",
+      ");"
+    ],
+    "description": "Create Employee table"
+  },
+
+  "~a1data": {
+    "prefix": "~a1zdt",
+    "body": [
+      "INSERT INTO Employee VALUES",
+      "(101, 'Pankaj', 45, 60000, 'Varanasi', 'India', 'pankaj@gmail.com'),",
+      "(102, 'Priya', 32, 45000, 'Mumbai', 'India', 'priya@yahoo.com'),",
+      "(103, 'Amit', 55, 70000, 'Varanasi', 'Germany', 'amit@gmail.com'),",
+      "(104, 'Sneha', 29, 25000, 'Lucknow', 'France', 'sneha@gmail.com'),",
+      "(105, 'Ritika', 40, 52000, 'Kolkata', 'Japan', 'ritika@hotmail.com'),",
+      "(106, 'Pooja', 51, 80000, 'Varanasi', 'India', 'pooja@gmail.com'),",
+      "(107, 'Anita', 38, 30000, 'Mumbai', 'China', 'anita@yahoo.com'),",
+      "(108, 'Ramesha', 47, 48000, 'Delhi', 'South Korea', 'ramesha@gmail.com'),",
+      "(109, 'Preeti', 35, 55000, 'Lucknow', 'North Korea', 'preeti@gmail.com'),",
+      "(110, 'Sonia', 28, 22000, 'Patna', 'India', 'sonia@gmail.com');"
+    ],
+    "description": "Insert sample data into Employee table"
+  },
+
+  "~a1q1": {
+    "prefix": "~a1q1",
+    "body": [
+      "SELECT Employee_ID, Name, Age, Salary",
+      "FROM Employee;"
+    ],
+    "description": "List Employee_ID Name Age and Salary of all employees"
+  },
+
+  "~a1q2": {
+    "prefix": "~a1q2",
+    "body": [
+      "SELECT Name, Age, Salary",
+      "FROM Employee",
+      "WHERE City = 'Varanasi';"
+    ],
+    "description": "List employees living in Varanasi"
+  },
+
+  "~a1q3": {
+    "prefix": "~a1q3",
+    "body": [
+      "SELECT Name, Age, Salary",
+      "FROM Employee",
+      "WHERE City <> 'Kolkata';"
+    ],
+    "description": "List employees not living in Kolkata"
+  },
+
+  "~a1q4": {
+    "prefix": "~a1q4",
+    "body": [
+      "SELECT Name, Salary",
+      "FROM Employee",
+      "WHERE City = 'Mumbai'",
+      "ORDER BY Salary;"
+    ],
+    "description": "List Mumbai employees sorted by salary"
+  },
+
+  "~a1q5": {
+    "prefix": "~a1q5",
+    "body": [
+      "SELECT Employee_ID, Name, Age, Salary",
+      "FROM Employee",
+      "WHERE City = 'Varanasi'",
+      "AND Salary > 50000;"
+    ],
+    "description": "List Varanasi employees with salary greater than 50000"
+  },
+
+  "~a1q6": {
+    "prefix": "~a1q6",
+    "body": [
+      "SELECT Name, Age, Salary",
+      "FROM Employee",
+      "WHERE City = 'Varanasi'",
+      "AND Age > 50;"
+    ],
+    "description": "List Varanasi employees age greater than 50"
+  },
+
+  "~a1q7": {
+    "prefix": "~a1q7",
+    "body": [
+      "SELECT Name, Salary",
+      "FROM Employee",
+      "WHERE City IN ('Varanasi', 'Lucknow');"
+    ],
+    "description": "List employees from Varanasi or Lucknow"
+  },
+
+  "~a1q8": {
+    "prefix": "~a1q8",
+    "body": [
+      "SELECT Name, Age, Salary",
+      "FROM Employee",
+      "WHERE Salary BETWEEN 20000 AND 50000;"
+    ],
+    "description": "List employees with salary between 20000 and 50000"
+  },
+
+  "~a1q9": {
+    "prefix": "~a1q9",
+    "body": [
+      "SELECT Employee_ID, Name, Salary",
+      "FROM Employee",
+      "WHERE Country IN ('Germany', 'France', 'Japan');"
+    ],
+    "description": "List employees from Germany France or Japan"
+  },
+
+  "~a1q10": {
+    "prefix": "~a1q10",
+    "body": [
+      "SELECT Employee_ID, Name, Salary",
+      "FROM Employee",
+      "WHERE Country NOT IN ('China', 'South Korea', 'North Korea');"
+    ],
+    "description": "List employees not from China South Korea or North Korea"
+  },
+
+  "~a1q11": {
+    "prefix": "~a1q11",
+    "body": [
+      "SELECT Name, Salary",
+      "FROM Employee",
+      "WHERE Name LIKE 'P%';"
+    ],
+    "description": "List employees whose name starts with P"
+  },
+
+  "~a1q12": {
+    "prefix": "~a1q12",
+    "body": [
+      "SELECT Name, Age",
+      "FROM Employee",
+      "WHERE Name LIKE '%a';"
+    ],
+    "description": "List employees whose name ends with a"
+  },
+
+  "~a1q13": {
+    "prefix": "~a1q13",
+    "body": [
+      "SELECT Name, Age",
+      "FROM Employee",
+      "WHERE Country LIKE '___n%';"
+    ],
+    "description": "List employees whose country fourth letter is n"
+  },
+
+  "~a1q14": {
+    "prefix": "~a1q14",
+    "body": [
+      "SELECT Name, City",
+      "FROM Employee",
+      "WHERE Email_id LIKE '%@gmail.com';"
+    ],
+    "description": "List employees having Gmail email IDs"
+  },
+
+  "~a1q15": {
+    "prefix": "~a1q15",
+    "body": [
+      "SELECT DISTINCT Country",
+      "FROM Employee;"
+    ],
+    "description": "List distinct countries of employees"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  "~a2tb CREATE TABLE": {
+    "prefix": "~a2tb",
+    "body": [
+      "CREATE DATABASE company_db;",
+      "",
+      "USE company_db;",
+      "",
+      "CREATE TABLE company (",
+      "    cmp_id INT PRIMARY KEY,",
+      "    company_name VARCHAR(100),",
+      "    city VARCHAR(50)",
+      ");",
+      "",
+      "CREATE TABLE employee (",
+      "    emp_id INT PRIMARY KEY,",
+      "    employee_name VARCHAR(50),",
+      "    street VARCHAR(100),",
+      "    city VARCHAR(50),",
+      "    email_id VARCHAR(100),",
+      "    comp_id INT,",
+      "    salary DECIMAL(10,2),",
+      "",
+      "    FOREIGN KEY (comp_id)",
+      "    REFERENCES company(cmp_id)",
+      ");",
+      "",
+      "CREATE TABLE manages (",
+      "    emp_id INT,",
+      "    mgr_id INT,",
+      "",
+      "    PRIMARY KEY (emp_id, mgr_id),",
+      "",
+      "    FOREIGN KEY (emp_id)",
+      "    REFERENCES employee(emp_id),",
+      "",
+      "    FOREIGN KEY (mgr_id)",
+      "    REFERENCES employee(emp_id)",
+      ");"
+    ],
+    "description": "Create employee company and manages tables"
+  },
+
+  "~a2data INSERT": {
+    "prefix": "~a2zdt",
+    "body": [
+      "INSERT INTO company VALUES",
+      "(1, 'First Bank Corporation', 'Mumbai'),",
+      "(2, 'Yes Bank Corporation', 'Delhi'),",
+      "(3, 'Small Bank Corporation', 'Kolkata'),",
+      "(4, 'ABC Technologies', 'Varanasi');",
+      "",
+      "INSERT INTO employee VALUES",
+      "(101, 'Pankaj', 'MG Road', 'Varanasi', 'pankaj@gmail.com', 1, 60000),",
+      "(102, 'Priya', 'Park Street', 'Mumbai', 'priya@gmail.com', 2, 45000),",
+      "(103, 'Smith Jones', 'Civil Lines', 'Varanasi', 'smith@gmail.com', 1, 80000),",
+      "(104, 'Anita', 'Lake Road', 'Kolkata', 'anita@gmail.com', 3, 30000),",
+      "(105, 'Preeti', 'Ring Road', 'Delhi', 'preeti@gmail.com', 4, 55000),",
+      "(106, 'Ramesh', 'Station Road', 'Mumbai', 'ramesh@gmail.com', 1, 25000),",
+      "(107, 'Pooja', 'GT Road', 'Varanasi', 'pooja@gmail.com', 2, 70000);",
+      "",
+      "INSERT INTO manages VALUES",
+      "(101, 103),",
+      "(102, 103),",
+      "(104, 103),",
+      "(105, 107),",
+      "(106, 103);"
+    ],
+    "description": "Insert sample data into company database"
+  },
+
+  "~a2q1 JOIN": {
+    "prefix": "~a2q1",
+    "body": [
+      "SELECT e.employee_name, e.city",
+      "FROM employee e",
+      "JOIN company c",
+      "ON e.comp_id = c.cmp_id",
+      "WHERE c.company_name = 'First Bank Corporation';"
+    ],
+    "description": "JOIN query"
+  },
+
+  "~a2q2 IN": {
+    "prefix": "~a2q2",
+    "body": [
+      "SELECT e.employee_name",
+      "FROM employee e",
+      "JOIN company c",
+      "ON e.comp_id = c.cmp_id",
+      "WHERE c.company_name IN",
+      "('First Bank Corporation', 'Yes Bank Corporation');"
+    ],
+    "description": "IN operator"
+  },
+
+  "~a2q3 BETWEEN": {
+    "prefix": "~a2q3",
+    "body": [
+      "SELECT e.employee_name, c.company_name",
+      "FROM employee e",
+      "JOIN company c",
+      "ON e.comp_id = c.cmp_id",
+      "WHERE e.salary BETWEEN 20000 AND 50000;"
+    ],
+    "description": "BETWEEN operator"
+  },
+
+  "~a2q4 AND": {
+    "prefix": "~a2q4",
+    "body": [
+      "SELECT e.employee_name, e.street, e.city",
+      "FROM employee e",
+      "JOIN company c",
+      "ON e.comp_id = c.cmp_id",
+      "WHERE c.company_name = 'First Bank Corporation'",
+      "AND e.salary > 10000;"
+    ],
+    "description": "AND condition"
+  },
+
+  "~a2q5 NOT IN": {
+    "prefix": "~a2q5",
+    "body": [
+      "SELECT employee_name",
+      "FROM employee",
+      "WHERE comp_id NOT IN (",
+      "    SELECT cmp_id",
+      "    FROM company",
+      "    WHERE company_name = 'First Bank Corporation'",
+      ");"
+    ],
+    "description": "NOT IN operator"
+  },
+
+  "~a2q6 SELF JOIN": {
+    "prefix": "~a2q6",
+    "body": [
+      "SELECT e.employee_name",
+      "FROM employee e",
+      "JOIN manages m",
+      "ON e.emp_id = m.emp_id",
+      "JOIN employee mgr",
+      "ON m.mgr_id = mgr.emp_id",
+      "WHERE mgr.employee_name = 'Smith Jones';"
+    ],
+    "description": "SELF JOIN"
+  },
+
+  "~a2q7 DISTINCT": {
+    "prefix": "~a2q7",
+    "body": [
+      "SELECT DISTINCT mgr.employee_name",
+      "FROM employee mgr",
+      "JOIN manages m",
+      "ON mgr.emp_id = m.mgr_id",
+      "WHERE mgr.city = 'Varanasi';"
+    ],
+    "description": "DISTINCT keyword"
+  },
+
+  "~a2q8 LIKE": {
+    "prefix": "~a2q8",
+    "body": [
+      "SELECT DISTINCT mgr.employee_name,",
+      "mgr.city,",
+      "mgr.salary",
+      "FROM employee mgr",
+      "JOIN manages m",
+      "ON mgr.emp_id = m.mgr_id",
+      "WHERE mgr.employee_name LIKE 'P%';"
+    ],
+    "description": "LIKE operator"
+  },
+
+  "~a2q9 WILDCARD": {
+    "prefix": "~a2q9",
+    "body": [
+      "SELECT e.employee_name",
+      "FROM employee e",
+      "JOIN company c",
+      "ON e.comp_id = c.cmp_id",
+      "WHERE c.company_name LIKE '%i__';"
+    ],
+    "description": "LIKE wildcard pattern"
+  },
+
+  "~a2q10 EQUALITY": {
+    "prefix": "~a2q10",
+    "body": [
+      "SELECT e.employee_name",
+      "FROM employee e",
+      "JOIN company c",
+      "ON e.comp_id = c.cmp_id",
+      "WHERE e.city = c.city;"
+    ],
+    "description": "Equality condition"
+  },
+
+  "~a2q11 SELF JOIN": {
+    "prefix": "~a2q11",
+    "body": [
+      "SELECT e.employee_name",
+      "FROM employee e",
+      "JOIN manages m",
+      "ON e.emp_id = m.emp_id",
+      "JOIN employee mgr",
+      "ON m.mgr_id = mgr.emp_id",
+      "WHERE e.city = mgr.city",
+      "AND e.street = mgr.street;"
+    ],
+    "description": "SELF JOIN with AND"
+  },
+
+  "~a2q12 ALL": {
+    "prefix": "~a2q12",
+    "body": [
+      "SELECT employee_name",
+      "FROM employee",
+      "WHERE salary > ALL (",
+      "    SELECT salary",
+      "    FROM employee e",
+      "    JOIN company c",
+      "    ON e.comp_id = c.cmp_id",
+      "    WHERE c.company_name = 'Small Bank Corporation'",
+      ");"
+    ],
+    "description": "ALL operator"
+  },
+
+  "~a2q13 AVG": {
+    "prefix": "~a2q13",
+    "body": [
+      "SELECT e.employee_name",
+      "FROM employee e",
+      "WHERE e.salary > (",
+      "    SELECT AVG(e2.salary)",
+      "    FROM employee e2",
+      "    WHERE e.comp_id = e2.comp_id",
+      ");"
+    ],
+    "description": "AVG aggregate"
+  },
+
+  "~a2q14 GROUP BY": {
+    "prefix": "~a2q14",
+    "body": [
+      "SELECT c.company_name",
+      "FROM company c",
+      "JOIN employee e",
+      "ON c.cmp_id = e.comp_id",
+      "GROUP BY c.company_name",
+      "HAVING COUNT(*) = (",
+      "    SELECT MAX(emp_count)",
+      "    FROM (",
+      "        SELECT COUNT(*) AS emp_count",
+      "        FROM employee",
+      "        GROUP BY comp_id",
+      "    ) AS temp",
+      ");"
+    ],
+    "description": "GROUP BY with MAX"
+  },
+
+  "~a2q15 SUM": {
+    "prefix": "~a2q15",
+    "body": [
+      "SELECT c.company_name",
+      "FROM company c",
+      "JOIN employee e",
+      "ON c.cmp_id = e.comp_id",
+      "GROUP BY c.company_name",
+      "HAVING SUM(e.salary) = (",
+      "    SELECT MIN(total_payroll)",
+      "    FROM (",
+      "        SELECT SUM(salary) AS total_payroll",
+      "        FROM employee",
+      "        GROUP BY comp_id",
+      "    ) AS temp",
+      ");"
+    ],
+    "description": "SUM aggregate"
+  },
+
+  "~a2q16 HAVING": {
+    "prefix": "~a2q16",
+    "body": [
+      "SELECT c.company_name",
+      "FROM company c",
+      "JOIN employee e",
+      "ON c.cmp_id = e.comp_id",
+      "GROUP BY c.company_name",
+      "HAVING AVG(e.salary) > (",
+      "    SELECT AVG(e2.salary)",
+      "    FROM employee e2",
+      "    JOIN company c2",
+      "    ON e2.comp_id = c2.cmp_id",
+      "    WHERE c2.company_name = 'First Bank Corporation'",
+      ");"
+    ],
+    "description": "HAVING clause"
+  },
+
+  "~a2q17 UPDATE": {
+    "prefix": "~a2q17",
+    "body": [
+      "UPDATE employee",
+      "SET city = 'New Delhi'",
+      "WHERE employee_name = 'Smith Jones';"
+    ],
+    "description": "UPDATE statement"
+  },
+
+  "~a2q18 UPDATE": {
+    "prefix": "~a2q18",
+    "body": [
+      "UPDATE employee",
+      "SET salary = salary + (salary * 0.10)",
+      "WHERE comp_id = (",
+      "    SELECT cmp_id",
+      "    FROM company",
+      "    WHERE company_name = 'First Bank Corporation'",
+      ");"
+    ],
+    "description": "UPDATE with arithmetic"
+  },
+
+  "~a2q19 DELETE": {
+    "prefix": "~a2q19",
+    "body": [
+      "DELETE FROM employee",
+      "WHERE comp_id = (",
+      "    SELECT cmp_id",
+      "    FROM company",
+      "    WHERE company_name = 'Small Bank Corporation'",
+      ");",
+      "",
+      "DELETE FROM company",
+      "WHERE company_name = 'Small Bank Corporation';"
+    ],
+    "description": "DELETE statement"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  "~a3tb CREATE TABLE": {
+    "prefix": "~a3tb",
+    "body": [
+      "CREATE DATABASE hotel_db;",
+      "",
+      "USE hotel_db;",
+      "",
+      "CREATE TABLE Hotel (",
+      "    Hotel_No VARCHAR(10) PRIMARY KEY,",
+      "    Name VARCHAR(50),",
+      "    City VARCHAR(50)",
+      ");",
+      "",
+      "CREATE TABLE Room (",
+      "    Room_No INT,",
+      "    Hotel_No VARCHAR(10),",
+      "    Type CHAR(1),",
+      "    Price DECIMAL(10,2),",
+      "",
+      "    PRIMARY KEY (Room_No, Hotel_No),",
+      "",
+      "    FOREIGN KEY (Hotel_No)",
+      "    REFERENCES Hotel(Hotel_No)",
+      ");",
+      "",
+      "CREATE TABLE Guest (",
+      "    Guest_No VARCHAR(10) PRIMARY KEY,",
+      "    Name VARCHAR(50),",
+      "    City VARCHAR(50)",
+      ");",
+      "",
+      "CREATE TABLE Booking (",
+      "    Hotel_No VARCHAR(10),",
+      "    Room_No INT,",
+      "    Guest_No VARCHAR(10),",
+      "    Date_From DATE,",
+      "    Date_To DATE,",
+      "",
+      "    PRIMARY KEY (Hotel_No, Room_No, Guest_No, Date_From),",
+      "",
+      "    FOREIGN KEY (Hotel_No)",
+      "    REFERENCES Hotel(Hotel_No),",
+      "",
+      "    FOREIGN KEY (Guest_No)",
+      "    REFERENCES Guest(Guest_No)",
+      ");"
+    ],
+    "description": "Create Hotel Room Guest and Booking tables"
+  },
+
+  "~a3data INSERT": {
+    "prefix": "~a3zdt",
+    "body": [
+      "INSERT INTO Hotel VALUES",
+      "('H111', 'Empire Hotel', 'New York'),",
+      "('H235', 'Park Place', 'New York'),",
+      "('H432', 'Brownstone Hotel', 'Toronto'),",
+      "('H498', 'James Plaza', 'Toronto'),",
+      "('H193', 'Devon Hotel', 'Boston'),",
+      "('H437', 'Clairmont Hotel', 'Boston');",
+      "",
+      "INSERT INTO Room VALUES",
+      "(313, 'H111', 'S', 145.00),",
+      "(412, 'H111', 'N', 145.00),",
+      "(1267, 'H235', 'N', 175.00),",
+      "(1289, 'H235', 'N', 195.00),",
+      "(876, 'H432', 'S', 124.00),",
+      "(898, 'H432', 'S', 124.00),",
+      "(345, 'H498', 'N', 160.00),",
+      "(467, 'H498', 'N', 180.00),",
+      "(1001, 'H193', 'S', 150.00),",
+      "(1201, 'H193', 'N', 175.00),",
+      "(257, 'H437', 'N', 140.00),",
+      "(223, 'H437', 'N', 155.00);",
+      "",
+      "INSERT INTO Guest VALUES",
+      "('G256', 'Adam Wayne', 'Pittsburgh'),",
+      "('G367', 'Tara Cummings', 'Baltimore'),",
+      "('G879', 'Vanessa Parry', 'Pittsburgh'),",
+      "('G230', 'Tom Hancock', 'Philadelphia'),",
+      "('G467', 'Robert Swift', 'Atlanta'),",
+      "('G190', 'Edward Cane', 'Baltimore');",
+      "",
+      "INSERT INTO Booking VALUES",
+      "('H111', 412, 'G256', '1999-08-10', '1999-08-15'),",
+      "('H111', 412, 'G367', '1999-08-18', '1999-08-21'),",
+      "('H235', 1267, 'G879', '1999-09-05', '1999-09-12'),",
+      "('H498', 467, 'G230', '1999-09-15', '1999-09-18'),",
+      "('H498', 345, 'G256', '1999-11-30', '1999-12-02'),",
+      "('H498', 345, 'G467', '1999-11-03', '1999-11-05'),",
+      "('H193', 1001, 'G190', '1999-11-15', '1999-11-19'),",
+      "('H193', 1001, 'G367', '1999-09-12', '1999-09-14'),",
+      "('H193', 1201, 'G367', '1999-10-01', '1999-10-06'),",
+      "('H437', 223, 'G190', '1999-10-04', '1999-10-06'),",
+      "('H437', 223, 'G879', '1999-09-14', '1999-09-17');"
+    ],
+    "description": "Insert sample data into hotel database"
+  },
+
+  "~a3q1 SELECT": {
+    "prefix": "~a3q1",
+    "body": [
+      "SELECT *",
+      "FROM Hotel;"
+    ],
+    "description": "List full details of all hotels"
+  },
+
+  "~a3q2 WHERE": {
+    "prefix": "~a3q2",
+    "body": [
+      "SELECT *",
+      "FROM Hotel",
+      "WHERE City = 'New York';"
+    ],
+    "description": "List full details of all hotels in New York"
+  },
+
+  "~a3q3 ORDER BY": {
+    "prefix": "~a3q3",
+    "body": [
+      "SELECT Name, City",
+      "FROM Guest",
+      "ORDER BY City;"
+    ],
+    "description": "List guest names and cities ordered by city"
+  },
+
+  "~a3q4 ORDER BY": {
+    "prefix": "~a3q4",
+    "body": [
+      "SELECT *",
+      "FROM Room",
+      "WHERE Type = 'N'",
+      "ORDER BY Price;"
+    ],
+    "description": "List family rooms in ascending order of price"
+  },
+
+  "~a3q5 COUNT": {
+    "prefix": "~a3q5",
+    "body": [
+      "SELECT COUNT(*) AS total_hotels",
+      "FROM Hotel;"
+    ],
+    "description": "Find total number of hotels"
+  },
+
+  "~a3q6 DISTINCT": {
+    "prefix": "~a3q6",
+    "body": [
+      "SELECT DISTINCT City",
+      "FROM Guest;"
+    ],
+    "description": "List distinct cities where guests live"
+  },
+
+  "~a3q7 AVG": {
+    "prefix": "~a3q7",
+    "body": [
+      "SELECT AVG(Price) AS average_price",
+      "FROM Room;"
+    ],
+    "description": "Find average room price"
+  },
+
+  "~a3q8 JOIN": {
+    "prefix": "~a3q8",
+    "body": [
+      "SELECT h.Name, r.Room_No, r.Type",
+      "FROM Hotel h",
+      "JOIN Room r",
+      "ON h.Hotel_No = r.Hotel_No;"
+    ],
+    "description": "List hotel names room numbers and room types"
+  },
+
+  "~a3q9 JOIN": {
+    "prefix": "~a3q9",
+    "body": [
+      "SELECT h.Name, b.Date_From, b.Room_No",
+      "FROM Hotel h",
+      "JOIN Booking b",
+      "ON h.Hotel_No = b.Hotel_No",
+      "WHERE h.City = 'New York';"
+    ],
+    "description": "List hotel names booking dates and room numbers for New York hotels"
+  },
+
+  "~a3q10 MONTH": {
+    "prefix": "~a3q10",
+    "body": [
+      "SELECT COUNT(*) AS total_bookings",
+      "FROM Booking",
+      "WHERE MONTH(Date_From) = 9;"
+    ],
+    "description": "Find number of bookings started in September"
+  },
+
+  "~a3q11 MONTH": {
+    "prefix": "~a3q11",
+    "body": [
+      "SELECT g.Name, g.City",
+      "FROM Guest g",
+      "JOIN Booking b",
+      "ON g.Guest_No = b.Guest_No",
+      "JOIN Hotel h",
+      "ON b.Hotel_No = h.Hotel_No",
+      "WHERE h.City = 'New York'",
+      "AND MONTH(b.Date_From) = 8;"
+    ],
+    "description": "List guests who began stay in New York in August"
+  },
+
+  "~a3q12 NOT IN": {
+    "prefix": "~a3q12",
+    "body": [
+      "SELECT h.Name, r.Room_No",
+      "FROM Hotel h",
+      "JOIN Room r",
+      "ON h.Hotel_No = r.Hotel_No",
+      "WHERE (r.Room_No, r.Hotel_No) NOT IN (",
+      "    SELECT Room_No, Hotel_No",
+      "    FROM Booking",
+      ");"
+    ],
+    "description": "List hotel rooms that have not been booked"
+  },
+
+  "~a3q13 MAX": {
+    "prefix": "~a3q13",
+    "body": [
+      "SELECT h.Name, h.City",
+      "FROM Hotel h",
+      "JOIN Room r",
+      "ON h.Hotel_No = r.Hotel_No",
+      "WHERE r.Price = (",
+      "    SELECT MAX(Price)",
+      "    FROM Room",
+      ");"
+    ],
+    "description": "Find hotel with highest priced room"
+  },
+
+  "~a3q14 MIN": {
+    "prefix": "~a3q14",
+    "body": [
+      "SELECT h.Name, r.Room_No, h.City, r.Price",
+      "FROM Hotel h",
+      "JOIN Room r",
+      "ON h.Hotel_No = r.Hotel_No",
+      "WHERE r.Price < (",
+      "    SELECT MIN(r2.Price)",
+      "    FROM Room r2",
+      "    JOIN Hotel h2",
+      "    ON r2.Hotel_No = h2.Hotel_No",
+      "    WHERE h2.City = 'Boston'",
+      ");"
+    ],
+    "description": "Find hotels having room price lower than minimum Boston hotel room price"
+  },
+
+  "~a3q15 GROUP BY": {
+    "prefix": "~a3q15",
+    "body": [
+      "SELECT h.City, AVG(r.Price) AS average_price",
+      "FROM Hotel h",
+      "JOIN Room r",
+      "ON h.Hotel_No = r.Hotel_No",
+      "GROUP BY h.City;"
+    ],
+    "description": "Find average room price grouped by city"
+  },
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  "~a4q1 HAVING": {
+    "prefix": "~a4q1",
+    "body": [
+      "SELECT a.aname",
+      "FROM Aircraft a",
+      "JOIN Certified c",
+      "ON a.aid = c.aid",
+      "JOIN Employees e",
+      "ON c.emp_id = e.emp_id",
+      "GROUP BY a.aname",
+      "HAVING MIN(e.salary) > 80000;"
+    ],
+    "description": "Find aircraft names where all certified pilots earn more than 80000"
+  },
+
+  "~a4q2 GROUP BY": {
+    "prefix": "~a4q2",
+    "body": [
+      "SELECT c.emp_id,",
+      "MAX(a.cruising_range) AS max_range",
+      "FROM Certified c",
+      "JOIN Aircraft a",
+      "ON c.aid = a.aid",
+      "GROUP BY c.emp_id",
+      "HAVING COUNT(c.aid) > 3;"
+    ],
+    "description": "Find emp_id and maximum cruising range for pilots certified for more than three aircraft"
+  },
+
+  "~a4q3 MIN": {
+    "prefix": "~a4q3",
+    "body": [
+      "SELECT ename",
+      "FROM Employees",
+      "WHERE salary < (",
+      "    SELECT MIN(price)",
+      "    FROM Flights",
+      "    WHERE from_city = 'Los Angeles'",
+      "    AND to_city = 'Honolulu'",
+      ");"
+    ],
+    "description": "Find pilot names whose salary is less than cheapest Los Angeles to Honolulu route"
+  },
+
+  "~a4q4 AVG": {
+    "prefix": "~a4q4",
+    "body": [
+      "SELECT a.aname,",
+      "AVG(e.salary) AS avg_salary",
+      "FROM Aircraft a",
+      "JOIN Certified c",
+      "ON a.aid = c.aid",
+      "JOIN Employees e",
+      "ON c.emp_id = e.emp_id",
+      "WHERE a.cruising_range > 1000",
+      "GROUP BY a.aname;"
+    ],
+    "description": "Find aircraft names and average salary of certified pilots for aircraft with range greater than 1000"
+  },
+
+  "~a4q5 LIKE": {
+    "prefix": "~a4q5",
+    "body": [
+      "SELECT DISTINCT e.ename",
+      "FROM Employees e",
+      "JOIN Certified c",
+      "ON e.emp_id = c.emp_id",
+      "JOIN Aircraft a",
+      "ON c.aid = a.aid",
+      "WHERE a.aname LIKE 'Boeing%';"
+    ],
+    "description": "Find names of pilots certified for Boeing aircraft"
+  },
+
+  "~a4q6 DISTINCT": {
+    "prefix": "~a4q6",
+    "body": [
+      "SELECT DISTINCT a.aid",
+      "FROM Aircraft a",
+      "JOIN Flights f",
+      "ON a.aid = f.aid",
+      "WHERE f.from_city = 'Los Angeles'",
+      "AND f.to_city = 'Chicago'",
+      "AND a.cruising_range >= f.distance;"
+    ],
+    "description": "Find aircraft ids usable for Los Angeles to Chicago routes"
+  },
+
+  "~a4q7 NOT EXISTS": {
+    "prefix": "~a4q7",
+    "body": [
+      "SELECT DISTINCT f.from_city, f.to_city",
+      "FROM Flights f",
+      "WHERE NOT EXISTS (",
+      "    SELECT *",
+      "    FROM Employees e",
+      "    WHERE e.salary > 100000",
+      "    AND NOT EXISTS (",
+      "        SELECT *",
+      "        FROM Certified c",
+      "        JOIN Aircraft a",
+      "        ON c.aid = a.aid",
+      "        WHERE c.emp_id = e.emp_id",
+      "        AND a.cruising_range >= f.distance",
+      "    )",
+      ");"
+    ],
+    "description": "Find routes that can be piloted by every pilot earning more than 100000"
+  },
+
+  "~a4q8 NOT IN": {
+    "prefix": "~a4q8",
+    "body": [
+      "SELECT DISTINCT e.ename",
+      "FROM Employees e",
+      "JOIN Certified c",
+      "ON e.emp_id = c.emp_id",
+      "JOIN Aircraft a",
+      "ON c.aid = a.aid",
+      "WHERE a.cruising_range > 3000",
+      "AND e.emp_id NOT IN (",
+      "    SELECT c2.emp_id",
+      "    FROM Certified c2",
+      "    JOIN Aircraft a2",
+      "    ON c2.aid = a2.aid",
+      "    WHERE a2.aname LIKE 'Boeing%'",
+      ");"
+    ],
+    "description": "Find pilots operating aircraft with range greater than 3000 but not Boeing aircraft"
+  },
+
+  "~a4q9 UNION": {
+    "prefix": "~a4q9",
+    "body": [
+      "SELECT DISTINCT f1.departs_time",
+      "FROM Flights f1",
+      "WHERE f1.from_city = 'Madison'",
+      "AND f1.to_city = 'New York'",
+      "AND f1.arrival_time < '18:00:00'",
+      "",
+      "UNION",
+      "",
+      "SELECT DISTINCT f1.departs_time",
+      "FROM Flights f1",
+      "JOIN Flights f2",
+      "ON f1.to_city = f2.from_city",
+      "WHERE f1.from_city = 'Madison'",
+      "AND f2.to_city = 'New York'",
+      "AND f2.arrival_time < '18:00:00';"
+    ],
+    "description": "Find departure times from Madison to New York with at most one stop before 6 PM"
+  },
+
+  "~a4q10 AVG": {
+    "prefix": "~a4q10",
+    "body": [
+      "SELECT",
+      "(",
+      "    SELECT AVG(e.salary)",
+      "    FROM Employees e",
+      "    JOIN Certified c",
+      "    ON e.emp_id = c.emp_id",
+      ")",
+      "-",
+      "(",
+      "    SELECT AVG(salary)",
+      "    FROM Employees",
+      ") AS salary_difference;"
+    ],
+    "description": "Find difference between average pilot salary and average employee salary"
+  },
+
+  "~a4q11 NOT IN": {
+    "prefix": "~a4q11",
+    "body": [
+      "SELECT ename, salary",
+      "FROM Employees",
+      "WHERE emp_id NOT IN (",
+      "    SELECT emp_id",
+      "    FROM Certified",
+      ")",
+      "AND salary > (",
+      "    SELECT AVG(e.salary)",
+      "    FROM Employees e",
+      "    JOIN Certified c",
+      "    ON e.emp_id = c.emp_id",
+      ");"
+    ],
+    "description": "Find nonpilot employees earning more than average pilot salary"
+  },
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  "~a5tb CREATE TABLE": {
+    "prefix": "~a5tb",
+    "body": [
+      "CREATE DATABASE library_db;",
+      "",
+      "USE library_db;",
+      "",
+      "CREATE TABLE Books (",
+      "    book_id INT PRIMARY KEY,",
+      "    title VARCHAR(100),",
+      "    author VARCHAR(100),",
+      "    published_year DATE,",
+      "    genre VARCHAR(100),",
+      "    available_copies INT",
+      ");",
+      "",
+      "CREATE TABLE Members (",
+      "    member_id INT PRIMARY KEY,",
+      "    name VARCHAR(100),",
+      "    email VARCHAR(100),",
+      "    age INT,",
+      "    gender VARCHAR(10)",
+      ");",
+      "",
+      "CREATE TABLE Borrowed (",
+      "    borrow_id INT PRIMARY KEY,",
+      "    book_id INT,",
+      "    member_id INT,",
+      "    borrow_date DATE,",
+      "    return_date DATE,",
+      "",
+      "    FOREIGN KEY (book_id)",
+      "    REFERENCES Books(book_id),",
+      "",
+      "    FOREIGN KEY (member_id)",
+      "    REFERENCES Members(member_id)",
+      ");"
+    ],
+    "description": "Create Books Members and Borrowed tables"
+  },
+
+  "~a5data INSERT": {
+    "prefix": "~a5zdt",
+    "body": [
+      "INSERT INTO Books VALUES",
+      "(551, 'The_Great_Gatsby', 'F_Scott_Fitzgerald', '1925-04-10', 'Tragedy', 10000),",
+      "(552, 'ULYSSES', 'James_Joyce', '1922-02-02', 'Modernist_Novel', 10000),",
+      "(553, 'Lolita', 'Vladimir_Nabokov', '1955-20-01', 'Novel', 10000),",
+      "(554, 'Brave_New_World', 'Aldous_Huxley', '1932-05-05', 'Science_Fiction', 10000),",
+      "(555, 'The_Sound_And_The_Fury', 'William_Faulkner', '1929-03-01', 'Southern_Gothic', 10000),",
+      "(556, 'Catch22', 'Joseph_Heller', '1961-10-10', 'Dark_Comedy', 10000),",
+      "(557, 'The_Grapes_Of_Wrath', 'John_Steinbeck', '1939-04-14', 'Novel', 10000),",
+      "(558, 'I_Claudius', 'Robert_Graves', '1934-08-10', 'Historical', 10000),",
+      "(559, 'To_The_Lighthouse', 'Virginia_Woolf', '1927-05-05', 'Modernism', 10000),",
+      "(5510, 'Slaughterhouse_Five', 'Kurt_Vonnegut', '1969-03-31', 'War_Novel', 10000);",
+      "",
+      "INSERT INTO Members VALUES",
+      "(1, 'John Smith', 'john@gmail.com', 25, 'Male'),",
+      "(2, 'Alice Brown', 'alice@gmail.com', 30, 'Female'),",
+      "(3, 'David Roy', 'david@gmail.com', 65, 'Male'),",
+      "(4, 'Sophia Das', 'sophia@gmail.com', 70, 'Female'),",
+      "(5, 'Michael Lee', 'michael@gmail.com', 40, 'Male');",
+      "",
+      "INSERT INTO Borrowed VALUES",
+      "(101, 551, 1, '2025-01-01', '2025-01-10'),",
+      "(102, 552, 2, '2025-01-05', '2025-01-20'),",
+      "(103, 553, 3, '2025-02-01', NULL),",
+      "(104, 554, 4, '2025-02-10', '2025-02-15'),",
+      "(105, 555, 5, '2025-03-01', NULL);"
+    ],
+    "description": "Insert sample data into library database"
+  },
+
+
+
+  "~a5q1 JOIN": {
+    "prefix": "~a5q1",
+    "body": [
+      "SELECT b.title",
+      "FROM Books b",
+      "JOIN Borrowed br",
+      "ON b.book_id = br.book_id",
+      "JOIN Members m",
+      "ON br.member_id = m.member_id",
+      "WHERE m.name = 'John Smith';"
+    ],
+    "description": "Get list of books borrowed by John Smith"
+  },
+
+  "~a5q2 JOIN": {
+    "prefix": "~a5q2",
+    "body": [
+      "SELECT m.name",
+      "FROM Members m",
+      "JOIN Borrowed br",
+      "ON m.member_id = br.member_id",
+      "JOIN Books b",
+      "ON br.book_id = b.book_id",
+      "WHERE b.title = 'Atomic Habits';"
+    ],
+    "description": "Find members who borrowed Atomic Habits"
+  },
+
+  "~a5q3 GROUP BY": {
+    "prefix": "~a5q3",
+    "body": [
+      "SELECT genre,",
+      "SUM(available_copies) AS total_copies",
+      "FROM Books",
+      "GROUP BY genre;"
+    ],
+    "description": "List genre wise available copies of books"
+  },
+
+  "~a5q4 MAX": {
+    "prefix": "~a5q4",
+    "body": [
+      "SELECT b.genre",
+      "FROM Books b",
+      "JOIN Borrowed br",
+      "ON b.book_id = br.book_id",
+      "JOIN Members m",
+      "ON br.member_id = m.member_id",
+      "WHERE m.gender = 'Female'",
+      "GROUP BY b.genre",
+      "ORDER BY COUNT(*) DESC",
+      "LIMIT 1;"
+    ],
+    "description": "Find most liked genre by female members"
+  },
+
+  "~a5q5 MAX": {
+    "prefix": "~a5q5",
+    "body": [
+      "SELECT b.genre",
+      "FROM Books b",
+      "JOIN Borrowed br",
+      "ON b.book_id = br.book_id",
+      "JOIN Members m",
+      "ON br.member_id = m.member_id",
+      "WHERE m.age >= 60",
+      "GROUP BY b.genre",
+      "ORDER BY COUNT(*) DESC",
+      "LIMIT 1;"
+    ],
+    "description": "Find most liked genre by senior citizens"
+  },
+
+  "~a5q6 DATEDIFF": {
+    "prefix": "~a5q6",
+    "body": [
+      "SELECT DISTINCT m.name",
+      "FROM Members m",
+      "JOIN Borrowed br",
+      "ON m.member_id = br.member_id",
+      "WHERE DATEDIFF(br.return_date, br.borrow_date) <= 14;"
+    ],
+    "description": "Find members who returned books within 14 days"
+  },
+
+  "~a5q7 DATEDIFF": {
+    "prefix": "~a5q7",
+    "body": [
+      "SELECT b.title, m.name",
+      "FROM Books b",
+      "JOIN Borrowed br",
+      "ON b.book_id = br.book_id",
+      "JOIN Members m",
+      "ON br.member_id = m.member_id",
+      "WHERE br.return_date IS NULL",
+      "AND DATEDIFF(CURDATE(), br.borrow_date) > 14;"
+    ],
+    "description": "Find overdue books and member names"
+  },
+
+  "~a5q8 GROUP BY": {
+    "prefix": "~a5q8",
+    "body": [
+      "SELECT b.genre",
+      "FROM Books b",
+      "JOIN Borrowed br",
+      "ON b.book_id = br.book_id",
+      "GROUP BY b.genre",
+      "ORDER BY COUNT(*) DESC",
+      "LIMIT 1;"
+    ],
+    "description": "Find most popular genre in library"
+  },
+
+  "~a5q9 ALTER": {
+    "prefix": "~a5q9",
+    "body": [
+      "ALTER TABLE Borrowed",
+      "ADD fine_amount DECIMAL(10,2) DEFAULT 0;"
+    ],
+    "description": "Add fine_amount column to Borrowed table"
+  },
+
+  "~a5q10 SUM": {
+    "prefix": "~a5q10",
+    "body": [
+      "SELECT SUM(fine_amount) AS total_fine",
+      "FROM Borrowed",
+      "WHERE return_date IS NULL",
+      "AND DATEDIFF(CURDATE(), borrow_date) > 14;"
+    ],
+    "description": "Calculate total fines from overdue books"
+  },
+
+  "~a5q11 LIMIT": {
+    "prefix": "~a5q11",
+    "body": [
+      "SELECT m.name,",
+      "COUNT(br.borrow_id) AS total_books",
+      "FROM Members m",
+      "JOIN Borrowed br",
+      "ON m.member_id = br.member_id",
+      "GROUP BY m.name",
+      "ORDER BY total_books DESC",
+      "LIMIT 5;"
+    ],
+    "description": "Find top 5 members who borrowed most books"
+  },
+
+  "~a5q12 UNIQUE": {
+    "prefix": "~a5q12",
+    "body": [
+      "ALTER TABLE Borrowed",
+      "ADD CONSTRAINT unique_book_member",
+      "UNIQUE(book_id, member_id);"
+    ],
+    "description": "Add unique constraint on book_id and member_id"
+  },
+
+  "~a5q13 WHERE": {
+    "prefix": "~a5q13",
+    "body": [
+      "SELECT title, available_copies",
+      "FROM Books",
+      "WHERE available_copies > 0;"
+    ],
+    "description": "Find books available for borrowing"
+  },
+
+  "~a5q14 CASE": {
+    "prefix": "~a5q14",
+    "body": [
+      "SELECT m.name,",
+      "COUNT(br.borrow_id) AS total_books,",
+      "CASE",
+      "    WHEN COUNT(br.borrow_id) > 10 THEN 'Frequent Borrowers'",
+      "    WHEN COUNT(br.borrow_id) BETWEEN 5 AND 10 THEN 'Regular Borrowers'",
+      "    ELSE 'Occasional Borrowers'",
+      "END AS category",
+      "FROM Members m",
+      "JOIN Borrowed br",
+      "ON m.member_id = br.member_id",
+      "GROUP BY m.name;"
+    ],
+    "description": "Categorize members using CASE statement"
+  },
+
+  "~a5q15 AVG": {
+    "prefix": "~a5q15",
+    "body": [
+      "SELECT m.name,",
+      "AVG(DATEDIFF(br.return_date, br.borrow_date)) AS avg_days",
+      "FROM Members m",
+      "JOIN Borrowed br",
+      "ON m.member_id = br.member_id",
+      "WHERE br.return_date IS NOT NULL",
+      "GROUP BY m.name",
+      "HAVING AVG(DATEDIFF(br.return_date, br.borrow_date)) < 7;"
+    ],
+    "description": "Find members returning books in less than 7 days"
+  },
+
+  "~a5q16 TRIGGER": {
+    "prefix": "~a5q16",
+    "body": [
+      "CREATE TRIGGER update_copies_after_issue",
+      "AFTER INSERT ON Borrowed",
+      "FOR EACH ROW",
+      "UPDATE Books",
+      "SET available_copies = available_copies - 1",
+      "WHERE book_id = NEW.book_id;"
+    ],
+    "description": "Trigger to decrease available copies after issue"
+  },
+
+  "~a5q17 TRIGGER": {
+    "prefix": "~a5q17",
+    "body": [
+      "CREATE TRIGGER update_copies_after_return",
+      "AFTER UPDATE ON Borrowed",
+      "FOR EACH ROW",
+      "UPDATE Books",
+      "SET available_copies = available_copies + 1",
+      "WHERE book_id = NEW.book_id",
+      "AND NEW.return_date IS NOT NULL;"
+    ],
+    "description": "Trigger to increase available copies after return"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  "~d_select": {
+    "prefix": "~d_select",
+    "body": [
+      "SELECT column_name",
+      "FROM table_name;"
+    ],
+    "description": "Basic SELECT statement"
+  },
+
+  "~d_where": {
+    "prefix": "~d_where",
+    "body": [
+      "SELECT column_name",
+      "FROM table_name",
+      "WHERE condition;"
+    ],
+    "description": "SELECT using WHERE condition"
+  },
+
+  "~d_distinct": {
+    "prefix": "~d_distinct",
+    "body": [
+      "SELECT DISTINCT column_name",
+      "FROM table_name;"
+    ],
+    "description": "DISTINCT keyword"
+  },
+
+  "~d_orderby": {
+    "prefix": "~d_orderby",
+    "body": [
+      "SELECT column_name",
+      "FROM table_name",
+      "ORDER BY column_name ASC;"
+    ],
+    "description": "ORDER BY clause"
+  },
+
+  "~d_groupby": {
+    "prefix": "~d_groupby",
+    "body": [
+      "SELECT column_name, COUNT(*)",
+      "FROM table_name",
+      "GROUP BY column_name;"
+    ],
+    "description": "GROUP BY clause"
+  },
+
+  "~d_having": {
+    "prefix": "~d_having",
+    "body": [
+      "SELECT column_name, COUNT(*)",
+      "FROM table_name",
+      "GROUP BY column_name",
+      "HAVING COUNT(*) > 1;"
+    ],
+    "description": "HAVING clause"
+  },
+
+  "~d_join": {
+    "prefix": "~d_join",
+    "body": [
+      "SELECT t1.column_name, t2.column_name",
+      "FROM table1 t1",
+      "JOIN table2 t2",
+      "ON t1.id = t2.id;"
+    ],
+    "description": "INNER JOIN"
+  },
+
+  "~d_leftjoin": {
+    "prefix": "~d_leftjoin",
+    "body": [
+      "SELECT t1.column_name, t2.column_name",
+      "FROM table1 t1",
+      "LEFT JOIN table2 t2",
+      "ON t1.id = t2.id;"
+    ],
+    "description": "LEFT JOIN"
+  },
+
+  "~d_rightjoin": {
+    "prefix": "~d_rightjoin",
+    "body": [
+      "SELECT t1.column_name, t2.column_name",
+      "FROM table1 t1",
+      "RIGHT JOIN table2 t2",
+      "ON t1.id = t2.id;"
+    ],
+    "description": "RIGHT JOIN"
+  },
+
+  "~d_selfjoin": {
+    "prefix": "~d_selfjoin",
+    "body": [
+      "SELECT a.column_name, b.column_name",
+      "FROM table_name a",
+      "JOIN table_name b",
+      "ON a.id = b.id;"
+    ],
+    "description": "SELF JOIN"
+  },
+
+  "~d_in": {
+    "prefix": "~d_in",
+    "body": [
+      "SELECT *",
+      "FROM table_name",
+      "WHERE column_name IN ('value1', 'value2');"
+    ],
+    "description": "IN operator"
+  },
+
+  "~d_notin": {
+    "prefix": "~d_notin",
+    "body": [
+      "SELECT *",
+      "FROM table_name",
+      "WHERE column_name NOT IN ('value1', 'value2');"
+    ],
+    "description": "NOT IN operator"
+  },
+
+  "~d_between": {
+    "prefix": "~d_between",
+    "body": [
+      "SELECT *",
+      "FROM table_name",
+      "WHERE column_name BETWEEN value1 AND value2;"
+    ],
+    "description": "BETWEEN operator"
+  },
+
+  "~d_like": {
+    "prefix": "~d_like",
+    "body": [
+      "SELECT *",
+      "FROM table_name",
+      "WHERE column_name LIKE 'A%';"
+    ],
+    "description": "LIKE operator"
+  },
+
+  "~d_isnull": {
+    "prefix": "~d_isnull",
+    "body": [
+      "SELECT *",
+      "FROM table_name",
+      "WHERE column_name IS NULL;"
+    ],
+    "description": "IS NULL condition"
+  },
+
+  "~d_notnull": {
+    "prefix": "~d_notnull",
+    "body": [
+      "SELECT *",
+      "FROM table_name",
+      "WHERE column_name IS NOT NULL;"
+    ],
+    "description": "IS NOT NULL condition"
+  },
+
+  "~d_exists": {
+    "prefix": "~d_exists",
+    "body": [
+      "SELECT column_name",
+      "FROM table1",
+      "WHERE EXISTS (",
+      "    SELECT *",
+      "    FROM table2",
+      "    WHERE table1.id = table2.id",
+      ");"
+    ],
+    "description": "EXISTS operator"
+  },
+
+  "~d_notexists": {
+    "prefix": "~d_notexists",
+    "body": [
+      "SELECT column_name",
+      "FROM table1",
+      "WHERE NOT EXISTS (",
+      "    SELECT *",
+      "    FROM table2",
+      "    WHERE table1.id = table2.id",
+      ");"
+    ],
+    "description": "NOT EXISTS operator"
+  },
+
+  "~d_any": {
+    "prefix": "~d_any",
+    "body": [
+      "SELECT *",
+      "FROM table_name",
+      "WHERE column_name > ANY (",
+      "    SELECT column_name",
+      "    FROM table_name",
+      ");"
+    ],
+    "description": "ANY operator"
+  },
+
+  "~d_all": {
+    "prefix": "~d_all",
+    "body": [
+      "SELECT *",
+      "FROM table_name",
+      "WHERE column_name > ALL (",
+      "    SELECT column_name",
+      "    FROM table_name",
+      ");"
+    ],
+    "description": "ALL operator"
+  },
+
+  "~d_union": {
+    "prefix": "~d_union",
+    "body": [
+      "SELECT column_name",
+      "FROM table1",
+      "",
+      "UNION",
+      "",
+      "SELECT column_name",
+      "FROM table2;"
+    ],
+    "description": "UNION operator"
+  },
+
+  "~d_case": {
+    "prefix": "~d_case",
+    "body": [
+      "SELECT column_name,",
+      "CASE",
+      "    WHEN condition THEN 'Value1'",
+      "    ELSE 'Value2'",
+      "END AS result",
+      "FROM table_name;"
+    ],
+    "description": "CASE statement"
+  },
+
+  "~d_sum": {
+    "prefix": "~d_sum",
+    "body": [
+      "SELECT SUM(column_name) AS total",
+      "FROM table_name;"
+    ],
+    "description": "SUM aggregate function"
+  },
+
+  "~d_avg": {
+    "prefix": "~d_avg",
+    "body": [
+      "SELECT AVG(column_name) AS average_value",
+      "FROM table_name;"
+    ],
+    "description": "AVG aggregate function"
+  },
+
+  "~d_max": {
+    "prefix": "~d_max",
+    "body": [
+      "SELECT MAX(column_name) AS maximum_value",
+      "FROM table_name;"
+    ],
+    "description": "MAX aggregate function"
+  },
+
+  "~d_min": {
+    "prefix": "~d_min",
+    "body": [
+      "SELECT MIN(column_name) AS minimum_value",
+      "FROM table_name;"
+    ],
+    "description": "MIN aggregate function"
+  },
+
+  "~d_count": {
+    "prefix": "~d_count",
+    "body": [
+      "SELECT COUNT(*) AS total_rows",
+      "FROM table_name;"
+    ],
+    "description": "COUNT aggregate function"
+  },
+
+  "~d_limit": {
+    "prefix": "~d_limit",
+    "body": [
+      "SELECT *",
+      "FROM table_name",
+      "LIMIT 5;"
+    ],
+    "description": "LIMIT clause"
+  },
+
+  "~d_insert": {
+    "prefix": "~d_insert",
+    "body": [
+      "INSERT INTO table_name",
+      "VALUES (value1, value2, value3);"
+    ],
+    "description": "INSERT statement"
+  },
+
+  "~d_update": {
+    "prefix": "~d_update",
+    "body": [
+      "UPDATE table_name",
+      "SET column_name = value",
+      "WHERE condition;"
+    ],
+    "description": "UPDATE statement"
+  },
+
+  "~d_delete": {
+    "prefix": "~d_delete",
+    "body": [
+      "DELETE FROM table_name",
+      "WHERE condition;"
+    ],
+    "description": "DELETE statement"
+  },
+
+  "~d_create_db": {
+    "prefix": "~d_create_db",
+    "body": [
+      "CREATE DATABASE database_name;"
+    ],
+    "description": "CREATE DATABASE statement"
+  },
+
+  "~d_use": {
+    "prefix": "~d_use",
+    "body": [
+      "USE database_name;"
+    ],
+    "description": "USE database"
+  },
+
+  "~d_create_table": {
+    "prefix": "~d_create_table",
+    "body": [
+      "CREATE TABLE table_name (",
+      "    id INT PRIMARY KEY,",
+      "    name VARCHAR(50)",
+      ");"
+    ],
+    "description": "CREATE TABLE statement"
+  },
+
+  "~d_alter_add": {
+    "prefix": "~d_alter_add",
+    "body": [
+      "ALTER TABLE table_name",
+      "ADD column_name VARCHAR(50);"
+    ],
+    "description": "ALTER TABLE ADD column"
+  },
+
+  "~d_alter_modify": {
+    "prefix": "~d_alter_modify",
+    "body": [
+      "ALTER TABLE table_name",
+      "MODIFY column_name VARCHAR(100);"
+    ],
+    "description": "ALTER TABLE MODIFY column"
+  },
+
+  "~d_alter_drop": {
+    "prefix": "~d_alter_drop",
+    "body": [
+      "ALTER TABLE table_name",
+      "DROP COLUMN column_name;"
+    ],
+    "description": "ALTER TABLE DROP column"
+  },
+
+  "~d_drop_table": {
+    "prefix": "~d_drop_table",
+    "body": [
+      "DROP TABLE table_name;"
+    ],
+    "description": "DROP TABLE statement"
+  },
+
+  "~d_drop_db": {
+    "prefix": "~d_drop_db",
+    "body": [
+      "DROP DATABASE database_name;"
+    ],
+    "description": "DROP DATABASE statement"
+  },
+
+  "~d_truncate": {
+    "prefix": "~d_truncate",
+    "body": [
+      "TRUNCATE TABLE table_name;"
+    ],
+    "description": "TRUNCATE TABLE statement"
+  },
+
+  "~d_desc": {
+    "prefix": "~d_desc",
+    "body": [
+      "DESC table_name;"
+    ],
+    "description": "Describe table structure"
+  },
+
+  "~d_pk": {
+    "prefix": "~d_pk",
+    "body": [
+      "CREATE TABLE table_name (",
+      "    id INT PRIMARY KEY,",
+      "    name VARCHAR(50)",
+      ");"
+    ],
+    "description": "PRIMARY KEY constraint"
+  },
+
+  "~d_fk": {
+    "prefix": "~d_fk",
+    "body": [
+      "CREATE TABLE child_table (",
+      "    id INT PRIMARY KEY,",
+      "    parent_id INT,",
+      "",
+      "    FOREIGN KEY (parent_id)",
+      "    REFERENCES parent_table(id)",
+      ");"
+    ],
+    "description": "FOREIGN KEY constraint"
+  },
+
+  "~d_unique": {
+    "prefix": "~d_unique",
+    "body": [
+      "CREATE TABLE table_name (",
+      "    email VARCHAR(100) UNIQUE",
+      ");"
+    ],
+    "description": "UNIQUE constraint"
+  },
+
+  "~d_default": {
+    "prefix": "~d_default",
+    "body": [
+      "CREATE TABLE table_name (",
+      "    status VARCHAR(20) DEFAULT 'Active'",
+      ");"
+    ],
+    "description": "DEFAULT constraint"
+  },
+
+  "~d_check": {
+    "prefix": "~d_check",
+    "body": [
+      "CREATE TABLE table_name (",
+      "    age INT CHECK(age >= 18)",
+      ");"
+    ],
+    "description": "CHECK constraint"
+  },
+
+  "~d_index": {
+    "prefix": "~d_index",
+    "body": [
+      "CREATE INDEX idx_name",
+      "ON table_name(column_name);"
+    ],
+    "description": "CREATE INDEX statement"
+  },
+
+  "~d_view": {
+    "prefix": "~d_view",
+    "body": [
+      "CREATE VIEW view_name AS",
+      "SELECT column_name",
+      "FROM table_name;"
+    ],
+    "description": "CREATE VIEW statement"
+  },
+
+  "~d_trigger": {
+    "prefix": "~d_trigger",
+    "body": [
+      "CREATE TRIGGER trigger_name",
+      "AFTER INSERT ON table_name",
+      "FOR EACH ROW",
+      "BEGIN",
+      "    UPDATE table_name",
+      "    SET column_name = value;",
+      "END;"
+    ],
+    "description": "CREATE TRIGGER statement"
+  }
 }
