@@ -1,0 +1,440 @@
+{
+  "TensorFlow Imports": {
+    "prefix": "~tf1",
+    "body": [
+      "import tensorflow as tf",
+      "from tensorflow.keras.models import Sequential",
+      "from tensorflow.keras.layers import Dense, Flatten",
+      "from tensorflow.keras.utils import to_categorical",
+      "from tensorflow.keras.optimizers import Adam",
+      "import matplotlib.pyplot as plt",
+      "import numpy as np"
+    ],
+    "description": "TensorFlow and required imports"
+  },
+
+  "Load MNIST Dataset": {
+    "prefix": "~tf2",
+    "body": [
+      "(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()"
+    ],
+    "description": "Load MNIST dataset"
+  },
+
+  "Normalize Dataset": {
+    "prefix": "~tf3",
+    "body": [
+      "x_train = x_train / 255.0",
+      "x_test = x_test / 255.0"
+    ],
+    "description": "Normalize MNIST data"
+  },
+
+  "One Hot Encoding": {
+    "prefix": "~tf4",
+    "body": [
+      "y_train = to_categorical(y_train, 10)",
+      "y_test = to_categorical(y_test, 10)"
+    ],
+    "description": "Convert labels to one hot encoding"
+  },
+
+  "Print Dataset Shape": {
+    "prefix": "~tf5",
+    "body": [
+      "print(\"Training Shape :\", x_train.shape)",
+      "print(\"Testing Shape  :\", x_test.shape)"
+    ],
+    "description": "Print training and testing shape"
+  },
+
+  "Sequential ANN Model": {
+    "prefix": "~tf6",
+    "body": [
+      "model = Sequential([",
+      "    Flatten(input_shape=(28, 28)),",
+      "    Dense(128, activation='relu'),",
+      "    Dense(64, activation='relu'),",
+      "    Dense(10, activation='softmax')",
+      "])"
+    ],
+    "description": "Create ANN model"
+  },
+
+  "Model Summary": {
+    "prefix": "~tf7",
+    "body": [
+      "model.summary()"
+    ],
+    "description": "Display model summary"
+  },
+
+  "Compile Model": {
+    "prefix": "~tf8",
+    "body": [
+      "model.compile(",
+      "    optimizer=Adam(),",
+      "    loss='categorical_crossentropy',",
+      "    metrics=['accuracy']",
+      ")"
+    ],
+    "description": "Compile TensorFlow model"
+  },
+
+  "Train Model": {
+    "prefix": "~tf9",
+    "body": [
+      "history = model.fit(",
+      "    x_train,",
+      "    y_train,",
+      "    epochs=10,",
+      "    batch_size=32,",
+      "    validation_split=0.2",
+      ")"
+    ],
+    "description": "Train TensorFlow model"
+  },
+
+  "Evaluate Model": {
+    "prefix": "~tf10",
+    "body": [
+      "test_loss, test_accuracy = model.evaluate(x_test, y_test)",
+      "",
+      "print(\"\\nTest Loss :\", test_loss)",
+      "print(\"Test Accuracy :\", test_accuracy)"
+    ],
+    "description": "Evaluate TensorFlow model"
+  },
+
+  "Hyperparameter Tuning": {
+    "prefix": "~tf11",
+    "body": [
+      "learning_rates = [0.01, 0.001, 0.0001]",
+      "batch_sizes = [32, 64, 128]",
+      "",
+      "print(\"\\nHyperparameter Results\\n\")",
+      "",
+      "for lr in learning_rates:",
+      "    for bs in batch_sizes:",
+      "",
+      "        temp_model = Sequential([",
+      "            Flatten(input_shape=(28,28)),",
+      "            Dense(128, activation='relu'),",
+      "            Dense(64, activation='relu'),",
+      "            Dense(10, activation='softmax')",
+      "        ])",
+      "",
+      "        optimizer = Adam(learning_rate=lr)",
+      "",
+      "        temp_model.compile(",
+      "            optimizer=optimizer,",
+      "            loss='categorical_crossentropy',",
+      "            metrics=['accuracy']",
+      "        )",
+      "",
+      "        temp_model.fit(",
+      "            x_train,",
+      "            y_train,",
+      "            epochs=3,",
+      "            batch_size=bs,",
+      "            verbose=0",
+      "        )",
+      "",
+      "        loss, acc = temp_model.evaluate(x_test, y_test, verbose=0)",
+      "",
+      "        print(f\"Learning Rate={lr}, Batch Size={bs}\")",
+      "        print(f\"Accuracy={acc:.4f}, Loss={loss:.4f}\\n\")"
+    ],
+    "description": "Hyperparameter tuning using learning rate and batch size"
+  },
+
+  "Plot Accuracy": {
+    "prefix": "~tf12",
+    "body": [
+      "plt.plot(history.history['accuracy'], label='Training Accuracy')",
+      "plt.plot(history.history['val_accuracy'], label='Validation Accuracy')",
+      "",
+      "plt.title('Accuracy over Epochs')",
+      "plt.xlabel('Epochs')",
+      "plt.ylabel('Accuracy')",
+      "plt.legend()",
+      "plt.show()"
+    ],
+    "description": "Plot training and validation accuracy"
+  },
+
+  "Plot Loss": {
+    "prefix": "~tf13",
+    "body": [
+      "plt.plot(history.history['loss'], label='Training Loss')",
+      "plt.plot(history.history['val_loss'], label='Validation Loss')",
+      "",
+      "plt.title('Loss over Epochs')",
+      "plt.xlabel('Epochs')",
+      "plt.ylabel('Loss')",
+      "plt.legend()",
+      "plt.show()"
+    ],
+    "description": "Plot training and validation loss"
+  },
+
+  "Prediction Visualization": {
+    "prefix": "~tf14",
+    "body": [
+      "predictions = model.predict(x_test)",
+      "",
+      "for i in range(5):",
+      "",
+      "    plt.imshow(x_test[i], cmap='gray')",
+      "",
+      "    plt.title(",
+      "        f\"Predicted: {np.argmax(predictions[i])} | True: {np.argmax(y_test[i])}\"",
+      "    )",
+      "",
+      "    plt.axis('off')",
+      "    plt.show()"
+    ],
+    "description": "Visualize predictions on test images"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  "1 imports": {
+    "prefix": "@cnimports",
+    "body": [
+      "import numpy as np",
+      "import tensorflow as tf",
+      "import matplotlib.pyplot as plt",
+      "",
+      "from tensorflow.keras.models import Sequential",
+      "from tensorflow.keras.layers import (",
+      "    Conv2D,",
+      "    MaxPooling2D,",
+      "    Flatten,",
+      "    Dense",
+      ")",
+      "",
+      "from tensorflow.keras.utils import to_categorical"
+    ],
+    "description": "CNN imports for TensorFlow/Keras"
+  },
+
+  "2 data": {
+    "prefix": "@cndata",
+    "body": [
+      "# Generate Synthetic Dataset using NumPy",
+      "",
+      "X = np.random.rand(",
+      "    6000, 32, 32, 1",
+      ").astype(np.float32)",
+      "",
+      "y = np.random.randint(",
+      "    0, 6, size=(6000,)",
+      ")",
+      "",
+      "# One-hot encoding",
+      "y = to_categorical(y, num_classes=6)",
+      "",
+      "print(\"X shape:\", X.shape)",
+      "print(\"y shape:\", y.shape)"
+    ],
+    "description": "Generate random CNN dataset"
+  },
+
+  "3 model": {
+    "prefix": "@cnmodel",
+    "body": [
+      "model = Sequential([",
+      "",
+      "    Conv2D(",
+      "        filters=16,",
+      "        kernel_size=(3,3),",
+      "        strides=1,",
+      "        padding='same',",
+      "        activation='relu',",
+      "        input_shape=(32,32,1)",
+      "    ),",
+      "",
+      "    MaxPooling2D(",
+      "        pool_size=(2,2),",
+      "        strides=2",
+      "    ),",
+      "",
+      "    Conv2D(",
+      "        filters=32,",
+      "        kernel_size=(3,3),",
+      "        strides=1,",
+      "        padding='same',",
+      "        activation='relu'",
+      "    ),",
+      "",
+      "    MaxPooling2D(",
+      "        pool_size=(2,2),",
+      "        strides=2",
+      "    ),",
+      "",
+      "    Flatten(),",
+      "",
+      "    Dense(",
+      "        units=6,",
+      "        activation='softmax'",
+      "    )",
+      "])",
+      "",
+      "model.summary()"
+    ],
+    "description": "CNN Sequential model"
+  },
+
+  "4 compile": {
+    "prefix": "@cncompile",
+    "body": [
+      "model.compile(",
+      "    optimizer=tf.keras.optimizers.SGD(",
+      "        learning_rate=0.005",
+      "    ),",
+      "",
+      "    loss='categorical_crossentropy',",
+      "",
+      "    metrics=['accuracy']",
+      ")"
+    ],
+    "description": "Compile CNN model"
+  },
+
+  "5 train": {
+    "prefix": "@cntrain",
+    "body": [
+      "history = model.fit(",
+      "    X,",
+      "    y,",
+      "    epochs=10,",
+      "    batch_size=32",
+      ")"
+    ],
+    "description": "Train CNN model"
+  },
+
+  "6 graph": {
+    "prefix": "@cngraph",
+    "body": [
+      "plt.plot(history.history['loss'])",
+      "plt.plot(history.history['accuracy'])",
+      "",
+      "plt.title(\"Training Graph\")",
+      "",
+      "plt.xlabel(\"Epoch\")",
+      "plt.ylabel(\"Value\")",
+      "",
+      "plt.legend([",
+      "    \"Loss\",",
+      "    \"Accuracy\"",
+      "])",
+      "",
+      "plt.show()"
+    ],
+    "description": "Plot training graph"
+  },
+
+  "7 test": {
+    "prefix": "@cntest",
+    "body": [
+      "sample = np.random.rand(",
+      "    1, 32, 32, 1",
+      ").astype(np.float32)",
+      "",
+      "prediction = model.predict(sample)",
+      "",
+      "predicted_class = np.argmax(prediction)",
+      "",
+      "print(\"\\\\nPredicted Class:\",",
+      "      predicted_class)"
+    ],
+    "description": "Test CNN on random sample"
+  },
+
+  "8 shapes": {
+    "prefix": "@cnshapes",
+    "body": [
+      "# Output Shape Calculation",
+      "",
+      "# Input:",
+      "# (1, 32, 32)",
+      "",
+      "# Conv1:",
+      "# ((32 - 3 + 2*1)/1) + 1 = 32",
+      "# Output:",
+      "# (16, 32, 32)",
+      "",
+      "# MaxPool1:",
+      "# 32 / 2 = 16",
+      "# Output:",
+      "# (16, 16, 16)",
+      "",
+      "# Conv2:",
+      "# ((16 - 3 + 2*1)/1) + 1 = 16",
+      "# Output:",
+      "# (32, 16, 16)",
+      "",
+      "# MaxPool2:",
+      "# 16 / 2 = 8",
+      "# Output:",
+      "# (32, 8, 8)",
+      "",
+      "# Flatten:",
+      "# 32 × 8 × 8 = 2048",
+      "",
+      "# Fully Connected:",
+      "# 2048 → 6"
+    ],
+    "description": "CNN output shape calculations"
+  },
+
+  "9 params": {
+    "prefix": "@cnparams",
+    "body": [
+      "# Parameter Shapes",
+      "",
+      "# W1 = (16, 1, 3, 3)",
+      "# b1 = (16)",
+      "",
+      "# W2 = (32, 16, 3, 3)",
+      "# b2 = (32)",
+      "",
+      "# W3 = (2048, 6)",
+      "# b3 = (6)"
+    ],
+    "description": "CNN parameter shapes"
+  }
+}
